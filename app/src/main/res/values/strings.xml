@@ -1,0 +1,20 @@
+<resources>
+    <string name="app_name">触摸和输入</string>
+
+    <string-array name="itemNames">
+        <item>Matrix使用</item>
+        <item>ImageView图片大小</item>
+        <item>GestureDetector使用</item>
+        <item>ScaleGestureListener使用</item>
+        <item>手势应用</item>
+    </string-array>
+
+    <string-array name="itemActions">
+        <item>com.mjy.customview.touch.MatrixActivity</item>
+        <item>com.mjy.customview.touch.ImageViewActivity</item>
+        <item>com.mjy.customview.touch.GestureDetectorActivity</item>
+        <item>com.mjy.customview.touch.ScaleGestureDetectorActivity</item>
+        <item>com.mjy.customview.picture.PictureActivity</item>
+    </string-array>
+
+</resources>
