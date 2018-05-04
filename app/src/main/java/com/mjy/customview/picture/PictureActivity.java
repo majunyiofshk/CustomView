@@ -37,8 +37,8 @@ public class PictureActivity extends AppCompatActivity implements XImageView.OnB
     }
 
     private void initView() {
-        XImageView ivPicture = (XImageView) findViewById(R.id.iv_picture);
-        ivPicture.setOnBackListener(this);
+//        XImageView ivPicture = (XImageView) findViewById(R.id.iv_picture);
+//        ivPicture.setOnBackListener(this);
     }
 
     @Override

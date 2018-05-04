@@ -63,8 +63,9 @@ public class GestureView extends AppCompatTextView implements
 
     @Override
     public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
-        Log.e("GestureView", "接口：OnGestureListener, 行为：onScroll, 事件："
-                + Convert.convert(e1.getAction()));
+        Log.e("GestureView", "接口：OnGestureListener, 行为：onScroll, 事件e1："
+                + Convert.convert(e1.getAction()) + ", 事件e2: " + Convert.convert(e2.getAction()));
+        Log.e("GestureView", "distanceX = " + distanceX + ", distanceY" + distanceY);
         return true;
     }
 

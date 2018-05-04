@@ -14,6 +14,8 @@ import android.view.View;
 
 import com.mjy.customview.R;
 
+import java.util.Arrays;
+
 /**
  * Matrix
  */
@@ -39,42 +41,115 @@ public class MatrixView extends View implements View.OnClickListener {
         setOnClickListener(this);
         mBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.test_xx);
         //计算Matrix
-        computeMatrix();
+//        mapPoints();
+//        mapRadius();
+//        mapRect();
+//        setXxx();
+//        postScale();
+        setRectToRect();
     }
 
     /*
     * 开始: [1.35, 0.0, 0.0][0.0, 1.35, 655.57495][0.0, 0.0, 1.0](x移动)
     * */
 
-    private void computeMatrix() {
-//        Matrix matrix1 = new Matrix();
-//        matrix1.postScale(2.0f,2.0f, 100, 100);
-//        Log.e(TAG, "matrix1 = " + matrix1.toShortString());
-//        matrix1.postScale(2.0f,2.0f, 100, 100);
-//        Log.e(TAG, "matrix1 = " + matrix1.toShortString());
-//        matrix1.postScale(2.0f,2.0f, 100, 100);
-//        Log.e(TAG, "matrix1 = " + matrix1.toShortString());
-//
-//        Matrix matrix2 = new Matrix();
-//        matrix2.postScale(2.0f, 2.0f);
-//        matrix2.postTranslate(100, 100);
-//        Log.e(TAG, "matrix2 = " + matrix2.toShortString());
-//
-//        Matrix matrix3 = new Matrix();
-//        matrix3.postTranslate(100, 100);
-//        Log.e(TAG, "matrix3 = " + matrix3.toShortString());
+    private void postScale() {
         Matrix matrix1 = new Matrix();
-        matrix1.postScale(1.35f, 1.35f, 100, 100);
+        matrix1.postScale(2.0f, 2.0f, 20, 20);
         Log.e(TAG, "matrix1 = " + matrix1.toShortString());
 
         Matrix matrix2 = new Matrix();
-        matrix2.postScale(2.0f, 2.0f, 100, 100);
+        matrix2.postScale(2.0f, 2.0f, 20, 20);
+        matrix2.postScale(5.0f, 5.0f, 50, 50);
         Log.e(TAG, "matrix2 = " + matrix2.toShortString());
 
         Matrix matrix3 = new Matrix();
-        matrix3.postScale(2.0f, 2.0f, 100, 100.0f);
-        matrix3.postScale(1.35f, 1.35f, 100, 100);
+        matrix3.postScale(2.0f, 2.0f, 20, 20);
+        matrix3.postScale(5.0f, 5.0f, 50, 50);
+        matrix3.postScale(0.2f, 0.2f, 50, 50);
         Log.e(TAG, "matrix3 = " + matrix3.toShortString());
+
+        Matrix matrix4 = new Matrix();
+        matrix4.postScale(2.0f, 2.0f, 20, 20);
+        matrix4.postScale(0.5f, 0.5f, 20, 20);
+        Log.e(TAG, "matrix4 = " + matrix4.toShortString());
+    }
+
+    private void mapPoints() {
+        Matrix matrix = new Matrix();
+        matrix.setScale(0.5f, 2.0f);
+        final float[] dst = new float[6];
+        final float[] src = new float[]{10, 20, 30, 40, 50, 60};
+        Log.e(TAG, "before: dst = " + Arrays.toString(dst));
+        Log.e(TAG, "before: src = " + Arrays.toString(src));
+        matrix.mapPoints(dst, 0, src, 2, (src.length >> 1) - 1);
+        Log.e(TAG, "after: dst = " + Arrays.toString(dst));
+        Log.e(TAG, "after: src = " + Arrays.toString(src));
+    }
+
+    private void mapRadius() {
+        Matrix matrix = new Matrix();
+        matrix.setScale(1.0f, 3.0f);
+
+        float radius = 100.0f;
+        float result = 0;
+        Log.e(TAG, "before: radius = " + radius);
+        Log.e(TAG, "before: result = " + result);
+
+        result = matrix.mapRadius(radius);
+        Log.e(TAG, "after: radius = " + radius);
+        Log.e(TAG, "after: result = " + result);
+    }
+
+    private void mapRect() {
+        Matrix matrix = new Matrix();
+        matrix.setRotate(90);
+
+        RectF dst = new RectF();
+        RectF src = new RectF(10, 10, 50, 50);
+        Log.e(TAG, "before: dst = " + dst.toString());
+        Log.e(TAG, "before: src = " + src.toString());
+
+        boolean isRect = matrix.mapRect(dst, src);
+        Log.e(TAG, "after: dst = " + dst.toString());
+        Log.e(TAG, "after: src = " + src.toString());
+        Log.e(TAG, "after: isRect = " + isRect);
+
+    }
+
+    private void setXxx() {
+        Matrix matrix1 = new Matrix();
+        matrix1.setScale(1, 2);
+        Log.e(TAG, "matrix1 = " + matrix1.toShortString());
+
+        Matrix matrix2 = new Matrix();
+        matrix2.setScale(1, 2);
+        matrix2.setScale(1, 2);
+        Log.e(TAG, "matrix2 = " + matrix2.toShortString());
+
+        Matrix matrix3 = new Matrix();
+        matrix3.setScale(1, 2, 100, 100);
+        Log.e(TAG, "matrix3 = " + matrix3.toShortString());
+
+        Matrix matrixA = new Matrix();
+        matrixA.setScale(2.0f, 2.0f, 100, 100);
+        Matrix matrixB = new Matrix();
+        matrixB.setScale(3.0f, 3.0f, 100, 100);
+        Matrix matrix4 = new Matrix();
+        matrix4.setConcat(matrixA, matrixB);
+        Log.e(TAG, "matrixA = " + matrixA.toShortString());
+        Log.e(TAG, "matrixB = " + matrixB.toShortString());
+        Log.e(TAG, "matrix4 = " + matrix4.toShortString());
+    }
+
+    private void setRectToRect(){
+        Matrix matrix1 = new Matrix();
+        RectF src = new RectF(0, 0, 50, 50);
+        RectF dst = new RectF(0, 0, 150, 150);
+        matrix1.setRectToRect(src, dst, Matrix.ScaleToFit.CENTER);
+        Log.e(TAG, "src = " + src.toString());
+        Log.e(TAG, "dst = " + dst.toString());
+        Log.e(TAG, "matrix1 = " + matrix1.toShortString());
     }
 
     @Override
@@ -86,10 +161,10 @@ public class MatrixView extends View implements View.OnClickListener {
 
     @Override
     protected void onDraw(Canvas canvas) {
-        RectF src= new RectF(0, 0, mBitmap.getWidth(), mBitmap.getHeight() );
-        RectF dst = new RectF(0, 0, mViewWidth, mViewHeight );
+        RectF src = new RectF(0, 0, mBitmap.getWidth(), mBitmap.getHeight());
+        RectF dst = new RectF(0, 0, mViewWidth, mViewHeight);
         // 核心要点
-        mMatrix.setRectToRect(src,dst, Matrix.ScaleToFit.CENTER);
+        mMatrix.setRectToRect(src, dst, Matrix.ScaleToFit.CENTER);
 
         // 根据Matrix绘制一个变换后的图片
         canvas.drawBitmap(mBitmap, mMatrix, new Paint());
@@ -124,11 +199,11 @@ public class MatrixView extends View implements View.OnClickListener {
 /*
 * 对于Matrix.postScale()4个参数的方法说明:
 * 表示相对于某个点进行缩放,由于缩放都是基于原点的,如果想对与某个点进行缩放,那么需要做以下三个操作,假设原来点坐标为(px,py)
-* 1.把基于缩放的点移动到原点
+* 1.把坐标原点移动到该缩放点
 * 2.进行缩放
-* 3.在把基于缩放的点移动到原来的位置
+* 3.把坐标原点移动到原来的位置
 * 公式:
-* s(sx, sy, px, py) = T(-px, -py) * S(sx, sy) * (px, py)
+* s(sx, sy, px, py) = T(px, py) * S(sx, sy) * T(-px, -py)
 * */
 
 /*
