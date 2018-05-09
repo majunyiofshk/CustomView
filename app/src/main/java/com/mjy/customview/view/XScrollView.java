@@ -1,10 +1,10 @@
 package com.mjy.customview.view;
 
 import android.content.Context;
-import android.graphics.Canvas;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
+import android.view.VelocityTracker;
 import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.ViewParent;
@@ -22,6 +22,9 @@ public class XScrollView extends FrameLayout {
     private int mMinimumFlingVelocity;
     private int mMaximumFlingVelocity;
     private boolean mIsBeingDragged;
+    private VelocityTracker mVelocityTracker;
+    private static final int INVALID_POINTER = -1;
+    private int mActivePointerId = INVALID_POINTER;
 
     public XScrollView(Context context) {
         this(context, null);
@@ -74,26 +77,37 @@ public class XScrollView extends FrameLayout {
 
     @Override
     public boolean onTouchEvent(MotionEvent ev) {
+        initVelocityTrackerIfNotExists();
+
         final int action = ev.getAction();
         switch (action) {
             case MotionEvent.ACTION_DOWN:
                 if (getChildCount() == 0) {
                     return false;
                 }
+
                 if (mIsBeingDragged = !mScroller.isFinished()) {
                     final ViewParent parent = getParent();
                     if (parent != null) {
                         parent.requestDisallowInterceptTouchEvent(true);
                     }
                 }
+
                 if (!mScroller.isFinished()) {
                     mScroller.abortAnimation();
                 }
+
                 mLastPoint = (int) ev.getY();
+                mActivePointerId = ev.getPointerId(0);
                 break;
 
             case MotionEvent.ACTION_MOVE:
-                final int y = (int) ev.getY();
+                final int activePointerIndex = ev.findPointerIndex(mActivePointerId);
+                if (activePointerIndex == -1) {
+                    break;
+                }
+
+                final int y = (int) ev.getY(activePointerIndex);
                 int deltaY = mLastPoint - y;
                 final int range = getScrollRange();
                 if (!mIsBeingDragged && Math.abs(deltaY) > mTouchSlop) {
@@ -104,23 +118,40 @@ public class XScrollView extends FrameLayout {
                         deltaY += mTouchSlop;
                     }
                 }
+
                 if (mIsBeingDragged) {
+                    mVelocityTracker.addMovement(ev);
                     mLastPoint = y;
                     overScrollBy(0, deltaY, 0, getScrollY(), 0, range, 0, 0, true);
                 }
                 break;
 
             case MotionEvent.ACTION_UP:
-                //处理fling事件
+                if (mIsBeingDragged) {
+                    final VelocityTracker velocityTracker = mVelocityTracker;
+                    velocityTracker.computeCurrentVelocity(1000, mMaximumFlingVelocity);
+                    int initialVelocity = (int) velocityTracker.getYVelocity(mActivePointerId);
+                    if (Math.abs(initialVelocity) > mMinimumFlingVelocity) {
+                        handleFling(-initialVelocity);
+                    }
+                }
+                recycleVelocityTracker();
                 break;
         }
         return true;
     }
 
-    @Override
-    protected void dispatchDraw(Canvas canvas) {
-        super.dispatchDraw(canvas);
-        Log.e("Parent --->", "draw");
+    private void initVelocityTrackerIfNotExists() {
+        if (mVelocityTracker == null) {
+            mVelocityTracker = VelocityTracker.obtain();
+        }
+    }
+
+    private void recycleVelocityTracker() {
+        if (mVelocityTracker != null) {
+            mVelocityTracker.recycle();
+            mVelocityTracker = null;
+        }
     }
 
     private int getScrollRange() {
@@ -135,7 +166,50 @@ public class XScrollView extends FrameLayout {
 
     @Override
     protected void onOverScrolled(int scrollX, int scrollY, boolean clampedX, boolean clampedY) {
-        super.scrollTo(scrollX, scrollY);
+        if (!mScroller.isFinished()) {
+            final int oldX = getScrollX();
+            final int oldY = getScrollY();
+            int x = mScroller.getCurrX();
+            int y = mScroller.getCurrY();
+
+            setScrollX(x);
+            setScrollY(y);
+
+            invalidate();
+        } else {
+            super.scrollTo(scrollX, scrollY);
+        }
+    }
+
+    @Override
+    public void computeScroll() {
+        if (mScroller.computeScrollOffset()) {
+            final int oldX = getScrollX();
+            final int oldY = getScrollY();
+            int x = mScroller.getCurrX();
+            int y = mScroller.getCurrY();
+
+            if (oldX != x || oldY != y) {
+                final int range = getScrollRange();
+                overScrollBy(x - oldX, y - oldY, oldX, oldY, 0, range, 0, 0, false);
+            }
+        }
+    }
+
+    private void handleFling(int velocityY) {
+        final int y = getScrollY();
+        final boolean canFling = (y > 0 || velocityY > 0) && (y < getScrollRange() || velocityY < 0);
+        if (canFling) {
+            fling(velocityY);
+        }
+    }
+
+    private void fling(int velocityY) {
+        if (getChildCount() > 0) {
+            Log.e("XScrollView", "开始fling");
+            mScroller.fling(getScrollX(), getScrollY(), 0, velocityY, 0, 0, 0, getScrollRange(), 0, 0);
+            postInvalidateOnAnimation();
+        }
     }
 }
 

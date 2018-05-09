@@ -30,6 +30,7 @@
             android:name=".touch.MatrixActivity"
             android:hardwareAccelerated="false"
             />
+        <activity android:name=".view.ScrollViewActivity"/>
     </application>
 
 </manifest>

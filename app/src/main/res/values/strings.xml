@@ -7,6 +7,7 @@
         <item>GestureDetector使用</item>
         <item>ScaleGestureListener使用</item>
         <item>手势应用</item>
+        <item>ScrollView相关</item>
     </string-array>
 
     <string-array name="itemActions">
@@ -15,6 +16,7 @@
         <item>com.mjy.customview.touch.GestureDetectorActivity</item>
         <item>com.mjy.customview.touch.ScaleGestureDetectorActivity</item>
         <item>com.mjy.customview.picture.PictureActivity</item>
+        <item>com.mjy.customview.view.ScrollViewActivity"</item>
     </string-array>
 
 </resources>
