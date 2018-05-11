@@ -1,5 +1,18 @@
 <resources>
     <string name="app_name">触摸和输入</string>
+    <string name="friend_circle">朋友圈</string>
+    <string name="scan_to_scan">扫一扫</string>
+    <string name="shake_to_shake">摇一摇</string>
+    <string name="look_to_look">看一看</string>
+    <string name="search_to_search">搜一搜</string>
+    <string name="nearby_people">附近的人</string>
+    <string name="drift_bottle">漂流瓶</string>
+    <string name="shopping">购物</string>
+    <string name="game">游戏</string>
+    <string name="small_routine">小程序</string>
+    <string name="play_to_play">玩一玩</string>
+    <string name="test">测试</string>
+
 
     <string-array name="itemNames">
         <item>Matrix使用</item>

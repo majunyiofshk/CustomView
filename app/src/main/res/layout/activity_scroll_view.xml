@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
+              android:background="#EEEAE8"
               android:orientation="vertical"
     >
 
@@ -11,22 +12,69 @@
         android:layout_height="match_parent"
         >
 
-        <FrameLayout
-            android:id="@+id/frame"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:background="#ff8888"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:paddingBottom="28dp"
             >
 
             <TextView
-                android:id="@+id/text"
-                android:layout_width="match_parent"
-                android:layout_height="1000dp"
-                android:gravity="center"
-                android:text="空空如也"
+                style="@style/scrollTextStyle"
+                android:text="@string/friend_circle"
                 />
 
-        </FrameLayout>
+            <TextView
+                style="@style/scrollTextStyle"
+                android:text="@string/scan_to_scan"
+                />
+
+            <TextView
+                style="@style/scrollTextStyle"
+                android:text="@string/shake_to_shake"
+                />
+
+            <TextView
+                style="@style/scrollTextStyle"
+                android:text="@string/look_to_look"
+                />
+
+            <TextView
+                style="@style/scrollTextStyle"
+                android:text="@string/search_to_search"
+                />
+
+            <TextView
+                style="@style/scrollTextStyle"
+                android:text="@string/nearby_people"
+                />
+
+            <TextView
+                style="@style/scrollTextStyle"
+                android:text="@string/drift_bottle"
+                />
+
+            <TextView
+                style="@style/scrollTextStyle"
+                android:text="@string/shopping"
+                />
+
+            <TextView
+                style="@style/scrollTextStyle"
+                android:text="@string/game"
+                />
+
+            <TextView
+                style="@style/scrollTextStyle"
+                android:text="@string/small_routine"
+                />
+
+            <TextView
+                style="@style/scrollTextStyle"
+                android:text="@string/play_to_play"
+                />
+        </LinearLayout>
+
     </com.mjy.customview.view.XScrollView>
 
 </LinearLayout>

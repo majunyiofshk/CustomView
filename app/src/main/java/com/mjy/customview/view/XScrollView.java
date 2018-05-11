@@ -16,15 +16,23 @@ import android.widget.OverScroller;
  */
 
 public class XScrollView extends FrameLayout {
+    private static final String TAG = "XScrollView";
+
+    private static final int INVALID_POINTER = -1;
+    private int mActivePointerId = INVALID_POINTER;
+
     private int mLastPoint;
+
+    private VelocityTracker mVelocityTracker;
+
+    private boolean mIsBeingDragged = false;
+
     private OverScroller mScroller;
+
     private int mTouchSlop;
     private int mMinimumFlingVelocity;
     private int mMaximumFlingVelocity;
-    private boolean mIsBeingDragged;
-    private VelocityTracker mVelocityTracker;
-    private static final int INVALID_POINTER = -1;
-    private int mActivePointerId = INVALID_POINTER;
+    private int mOverDistance = 500;
 
     public XScrollView(Context context) {
         this(context, null);
@@ -122,7 +130,8 @@ public class XScrollView extends FrameLayout {
                 if (mIsBeingDragged) {
                     mVelocityTracker.addMovement(ev);
                     mLastPoint = y;
-                    overScrollBy(0, deltaY, 0, getScrollY(), 0, range, 0, 0, true);
+                    overScrollBy(0, deltaY, 0, getScrollY(), 0, range,
+                            0, mOverDistance, true);
                 }
                 break;
 
@@ -133,12 +142,22 @@ public class XScrollView extends FrameLayout {
                     int initialVelocity = (int) velocityTracker.getYVelocity(mActivePointerId);
                     if (Math.abs(initialVelocity) > mMinimumFlingVelocity) {
                         handleFling(-initialVelocity);
+                    } else if (mScroller.springBack(getScrollX(), getScrollY(), 0, 0,
+                            0, getScrollRange())) {
+                        postInvalidateOnAnimation();
                     }
+                    mActivePointerId = INVALID_POINTER;
+                    endDrag();
                 }
-                recycleVelocityTracker();
                 break;
         }
         return true;
+    }
+
+    private void endDrag() {
+        mIsBeingDragged = false;
+
+        recycleVelocityTracker();
     }
 
     private void initVelocityTrackerIfNotExists() {
@@ -169,12 +188,9 @@ public class XScrollView extends FrameLayout {
         if (!mScroller.isFinished()) {
             final int oldX = getScrollX();
             final int oldY = getScrollY();
-            int x = mScroller.getCurrX();
-            int y = mScroller.getCurrY();
-
-            setScrollX(x);
-            setScrollY(y);
-
+            setScrollX(scrollX);
+            setScrollY(scrollY);
+            onScrollChanged(scrollX, scrollY, oldX, oldY);
             invalidate();
         } else {
             super.scrollTo(scrollX, scrollY);
@@ -188,17 +204,48 @@ public class XScrollView extends FrameLayout {
             final int oldY = getScrollY();
             int x = mScroller.getCurrX();
             int y = mScroller.getCurrY();
+            final int range = getScrollRange();
 
-            if (oldX != x || oldY != y) {
-                final int range = getScrollRange();
-                overScrollBy(x - oldX, y - oldY, oldX, oldY, 0, range, 0, 0, false);
+            /*
+            * fling情况下和回弹时才能执行滚动
+            * */
+            if (oldX != x || oldY != y || (y >= -mOverDistance && y < 0)
+                    || (y > range && y <= range + mOverDistance)) {
+                Log.e(TAG, "处理fling, oldY = " + oldY + ", y = " + y);
+                overScrollBy(x - oldX, y - oldY, oldX, oldY,
+                        0, range, 0, mOverDistance, false);
             }
         }
     }
 
+    @Override
+    protected int computeVerticalScrollRange() { //在于ScrollBar高度的计算,超过返回后ScrollBar的高度会变小作为一个提示
+        final int count = getChildCount();
+        final int contentHeight = getHeight() - getPaddingBottom() - getPaddingTop();
+        if (count == 0) {
+            return contentHeight;
+        }
+
+        int scrollRange = getChildAt(0).getBottom();
+        final int scrollY = getScrollY();
+        final int overScrollBottom = Math.max(0, scrollRange - contentHeight);
+        if (scrollY < 0) {
+            scrollRange -= scrollY;
+        } else if (scrollY > overScrollBottom) {
+            scrollRange += scrollY - overScrollBottom;
+        }
+        return scrollRange;
+    }
+
+    @Override
+    protected int computeVerticalScrollOffset() {
+        return Math.max(0, super.computeVerticalScrollOffset());
+    }
+
     private void handleFling(int velocityY) {
         final int y = getScrollY();
-        final boolean canFling = (y > 0 || velocityY > 0) && (y < getScrollRange() || velocityY < 0);
+        final boolean canFling = (y >= -mOverDistance || velocityY > 0) &&
+                (y <= getScrollRange() + mOverDistance || velocityY < 0);
         if (canFling) {
             fling(velocityY);
         }
@@ -206,8 +253,8 @@ public class XScrollView extends FrameLayout {
 
     private void fling(int velocityY) {
         if (getChildCount() > 0) {
-            Log.e("XScrollView", "开始fling");
-            mScroller.fling(getScrollX(), getScrollY(), 0, velocityY, 0, 0, 0, getScrollRange(), 0, 0);
+            mScroller.fling(getScrollX(), getScrollY(), 0, velocityY, 0, 0,
+                    0, getScrollRange(), 0, mOverDistance);
             postInvalidateOnAnimation();
         }
     }
@@ -221,23 +268,13 @@ public class XScrollView extends FrameLayout {
 * */
 
 /*
-* ScrollView触摸事件处理:
-*
-* ScrollView中的OverScroller:
-*  1.OverScroller是用来将一段距离在一定的时间范围内拆分为若干个距离,也就是说在一定的时间内只滑动一部分的距离。给人的一种感觉
-*    就是在滑动。
-*  2.创建OverScroller的时候mFinished为true,调用startScroll时mFinished为false。在duration时间过后或者手动调用
-*    abortAnimation(),mFinished为true。
-*
-* 1.MotionEvent.ACTION_DOWN:
-*  (1)如果没有子View就不滑动,不滑动的处理就是返回值为false
-*  (2)如果正在滑动,请求父容器不要拦截。(不理解)
-*  (3)如果正在滑动,证明上一次的滑动还在进行,也就是fling效果。当手指再次触碰屏幕时,需要停止fling。停止fling的处理就是调用
-*     Scroller.abortAnimation()。
-*  (4)记录这一次的手触摸的位置,以便move事件使用。
-*
-* 2.MotionEvent.ACTION_MOVE:
-*  (1)如果不是滑动状态,就判断滑动距离是否小于默认值,如果是就,就忽略此次操作。
-*  (2)如果是滑动状态,就开始计算手指滑动的距离,调用overScrollBy()的方法开始滑动,
-* 3.
+* 疑惑
+* 1.OverScroller中fling参数的理解。
+* 2.OverScroller中springBack的作用以及参数的理解
+* 3.EdgeEffect的作用以及理解。
+* */
+
+/*
+* 1.理解fling中的可以超过滚动的范围
+*   当使用了这个方法,那么值得计算会超过滚动的范围,超过滚动范围后的值又会回到滚动范围的临界值。
 * */

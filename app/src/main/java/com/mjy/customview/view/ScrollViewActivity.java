@@ -3,7 +3,7 @@ package com.mjy.customview.view;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
+import android.view.MotionEvent;
 
 import com.mjy.customview.R;
 
@@ -17,7 +17,11 @@ public class ScrollViewActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_scroll_view);
-        Log.e("ScrollViewActivity", "onCreate");
+    }
+
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        return super.dispatchTouchEvent(ev);
     }
 }
 
@@ -33,3 +37,5 @@ public class ScrollViewActivity extends AppCompatActivity {
 *   ScrollView高度:父容器高度 = 子View最大高度。
 * 4.有1和3可以得出ScrollView的直接子View高度不受layout_height属性的干扰,要么是子View最大高度,要么是ScrollView大小。
 * */
+
+
