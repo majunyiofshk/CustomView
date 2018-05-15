@@ -18,19 +18,21 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        <activity android:name=".touch.GestureDetectorActivity"/>
-        <activity android:name=".touch.ScaleGestureDetectorActivity"/>
-        <activity android:name=".touch.ImageViewActivity"/>
+        <activity android:name=".gesture.GestureDetectorActivity"/>
+        <activity android:name=".gesture.ScaleGestureDetectorActivity"/>
+        <activity android:name=".image.ImageViewActivity"/>
         <activity
             android:name=".picture.PictureActivity"
             android:theme="@style/PictureActivityTheme"
             android:hardwareAccelerated="false"
             />
         <activity
-            android:name=".touch.MatrixActivity"
+            android:name=".matrix.MatrixActivity"
             android:hardwareAccelerated="false"
             />
-        <activity android:name=".view.ScrollViewActivity"/>
+        <activity android:name=".scrollview.ScrollViewActivity"/>
+        <activity android:name=".scroller.ScrollerActivity"/>
+        <activity android:name=".RulerActivity"/>
     </application>
 
 </manifest>

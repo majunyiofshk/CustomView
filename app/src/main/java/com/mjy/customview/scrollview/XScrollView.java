@@ -1,4 +1,4 @@
-package com.mjy.customview.view;
+package com.mjy.customview.scrollview;
 
 import android.content.Context;
 import android.util.AttributeSet;
@@ -142,8 +142,10 @@ public class XScrollView extends FrameLayout {
                     int initialVelocity = (int) velocityTracker.getYVelocity(mActivePointerId);
                     if (Math.abs(initialVelocity) > mMinimumFlingVelocity) {
                         handleFling(-initialVelocity);
+                        Log.e(TAG, "是否fling");
                     } else if (mScroller.springBack(getScrollX(), getScrollY(), 0, 0,
                             0, getScrollRange())) {
+                        Log.e(TAG, "是否回弹");
                         postInvalidateOnAnimation();
                     }
                     mActivePointerId = INVALID_POINTER;
@@ -184,6 +186,22 @@ public class XScrollView extends FrameLayout {
     }
 
     @Override
+    protected boolean overScrollBy(int deltaX, int deltaY,
+                                   int scrollX, int scrollY,
+                                   int scrollRangeX, int scrollRangeY,
+                                   int maxOverScrollX, int maxOverScrollY,
+                                   boolean isTouchEvent) {
+        //对fling没有产生阻尼效果
+        if ((scrollY >= -mOverDistance && scrollY < 0) ||
+                (scrollY > scrollRangeY && scrollY <= scrollRangeY + mOverDistance)){
+            deltaY = (int) (deltaY / 2.0f + 0.5f);
+            Log.e(TAG, "deltaY = " + deltaY);
+        }
+        return super.overScrollBy(deltaX, deltaY, scrollX, scrollY, scrollRangeX,
+                scrollRangeY, maxOverScrollX, maxOverScrollY, isTouchEvent);
+    }
+
+    @Override
     protected void onOverScrolled(int scrollX, int scrollY, boolean clampedX, boolean clampedY) {
         if (!mScroller.isFinished()) {
             final int oldX = getScrollX();
@@ -211,7 +229,7 @@ public class XScrollView extends FrameLayout {
             * */
             if (oldX != x || oldY != y || (y >= -mOverDistance && y < 0)
                     || (y > range && y <= range + mOverDistance)) {
-                Log.e(TAG, "处理fling, oldY = " + oldY + ", y = " + y);
+//                Log.e(TAG, "处理fling, oldY = " + oldY + ", y = " + y);
                 overScrollBy(x - oldX, y - oldY, oldX, oldY,
                         0, range, 0, mOverDistance, false);
             }

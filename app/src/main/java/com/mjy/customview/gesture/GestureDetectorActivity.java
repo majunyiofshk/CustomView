@@ -1,4 +1,4 @@
-package com.mjy.customview.touch;
+package com.mjy.customview.gesture;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;

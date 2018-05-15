@@ -7,4 +7,10 @@
     <color name="textBlack">#777777</color>
     <color name="itemPressed">#ff8888</color>
 
+    <!--薄荷卷尺-->
+    <color name="rulerBackground">#f8f8f8</color>
+    <color name="rulerGraduation">#dddddd</color>
+    <color name="rulerMiddleGraduation">#80c87e</color>
+    <color name="rulerGraduationText">#333333</color>
+
 </resources>

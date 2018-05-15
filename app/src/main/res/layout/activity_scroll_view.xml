@@ -6,7 +6,7 @@
               android:orientation="vertical"
     >
 
-    <com.mjy.customview.view.XScrollView
+    <com.mjy.customview.scrollview.XScrollView
         android:id="@+id/scroll"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -75,6 +75,6 @@
                 />
         </LinearLayout>
 
-    </com.mjy.customview.view.XScrollView>
+    </com.mjy.customview.scrollview.XScrollView>
 
 </LinearLayout>

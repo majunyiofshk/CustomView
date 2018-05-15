@@ -1,4 +1,4 @@
-package com.mjy.customview.touch;
+package com.mjy.customview.image;
 
 import android.content.res.Resources;
 import android.graphics.Bitmap;

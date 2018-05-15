@@ -1,4 +1,4 @@
-package com.mjy.customview.view;
+package com.mjy.customview.scrollview;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;

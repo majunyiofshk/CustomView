@@ -5,9 +5,9 @@
               android:orientation="vertical"
     >
 
-    <com.mjy.customview.matrix.MatrixView
-        android:layout_marginTop="100px"
+    <com.mjy.customview.scroller.ScrollerView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Scroller相关用法"
         />
 </LinearLayout>
