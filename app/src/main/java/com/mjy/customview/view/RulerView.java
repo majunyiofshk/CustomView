@@ -21,7 +21,14 @@ import com.mjy.customview.R;
 
 public class RulerView extends View {
     public static final String TAG = "RulerView";
+
+    private int mWidth;
+    private int mHeight;
+    private int mMinGraduation = 25; //最小刻度
+    private int mMaxGraduation = 200; //最大刻度
+
     private OverScroller mScroller;
+    private int mOverDistance; //超出的距离
     private int mTouchSlop;
     private VelocityTracker mVelocityTracker;
     private int mMinimumFlingVelocity;
@@ -33,13 +40,10 @@ public class RulerView extends View {
 
     private boolean mIsBeingDragged;
 
-    private int mWidth;
-    private int mHeight;
-
     private float mSmallGraduationHeight;
     private float mBigGraduationHeight;
     private float mMiddleGraduationHeight;
-    private int mSpace = 30;
+    private int mSpace = 29;
     private int mTotalGraduation;
 
     private Paint mSmallGraduationPaint;
@@ -65,6 +69,8 @@ public class RulerView extends View {
         mTouchSlop = configuration.getScaledTouchSlop();
         mMaximumFlingVelocity = configuration.getScaledMaximumFlingVelocity();
         mMinimumFlingVelocity = configuration.getScaledMinimumFlingVelocity();
+
+        mOverDistance = 2 * 10 * mSpace;
 
         mSmallGraduationPaint = new Paint();
         mSmallGraduationPaint.setStrokeWidth(2);
@@ -146,21 +152,39 @@ public class RulerView extends View {
                     mVelocityTracker.addMovement(event);
                     mLastPoint = x;
                     overScrollBy(deltaX, 0, getScrollX(), 0, range, 0,
-                            0, 0, true);
+                            mOverDistance, 0, true);
                 }
                 break;
 
-//            case MotionEvent.ACTION_UP:
-//                if (mIsBeingDragged){
-//                    final VelocityTracker velocityTracker = mVelocityTracker;
-//                    velocityTracker.computeCurrentVelocity(1000, mMaximumFlingVelocity);
-//                    int initialVelocity = (int) velocityTracker.getXVelocity(mActivePointerId);
-//                    if (Math.abs(initialVelocity) > mMinimumFlingVelocity){
-//                        Log.e(TAG, "是否fling?");
-//                        handleFling(-initialVelocity);
-//                    }
-//                }
-//                break;
+            case MotionEvent.ACTION_UP:
+                if (mIsBeingDragged){
+                    final VelocityTracker velocityTracker = mVelocityTracker;
+                    velocityTracker.computeCurrentVelocity(1000, mMaximumFlingVelocity);
+                    int initialVelocity = (int) velocityTracker.getXVelocity(mActivePointerId);
+                    if (Math.abs(initialVelocity) > mMinimumFlingVelocity){
+                        handleFling(-initialVelocity);
+                    }else if (mScroller.springBack(getScrollX(), getScrollY(),
+                            0, getScrollRange(), 0, 0)){
+                        postInvalidateOnAnimation();
+                    }
+
+                    mActivePointerId = INVALID_POINTER;
+                    endDrag();
+                }
+                break;
+
+            case MotionEvent.ACTION_CANCEL:
+                if (mIsBeingDragged){
+                    if (mScroller.springBack(getScrollX(), getScrollY(),
+                            0, getScrollRange(), 0, 0)){
+                        postInvalidateOnAnimation();
+                    }
+                }
+
+                mActivePointerId = INVALID_POINTER;
+                endDrag();
+
+                break;
         }
         return true;
     }
@@ -171,12 +195,26 @@ public class RulerView extends View {
         }
     }
 
+    private void recycleVelocityTracker() {
+        if (mVelocityTracker != null) {
+            mVelocityTracker.recycle();
+            mVelocityTracker = null;
+        }
+    }
+
+    private void endDrag(){
+        mIsBeingDragged = false;
+
+        recycleVelocityTracker();
+    }
+
     private void handleFling(int velocityX){
         final int x = getScrollX();
-        final boolean canFling = (x >= 0 || velocityX > 0) &&
-                (x <= getScrollRange() || velocityX < 0);
+        final boolean canFling = (x >= -mOverDistance || velocityX > 0) &&
+                (x <= getScrollRange() + mOverDistance || velocityX < 0);
         if (canFling) {
-            mScroller.fling(getScrollX(), getScrollY(), velocityX, 0, 0, getScrollRange(), 0, 0);
+            mScroller.fling(getScrollX(), getScrollY(), velocityX, 0, 0,
+                    getScrollRange(), 0, 0, mOverDistance, 0);
             postInvalidateOnAnimation();
         }
     }
@@ -184,68 +222,67 @@ public class RulerView extends View {
     @Override
     public void computeScroll() {
         if (mScroller.computeScrollOffset()){
-            Log.e(TAG, "computeScroll --->是否执行?");
             final int oldX = getScrollX();
             final int oldY = getScrollY();
             int x = mScroller.getCurrX();
             int y = mScroller.getCurrY();
             final int range = getScrollRange();
-
-            if (oldX != x || oldY != y ) {
+            Log.e(TAG, "oldX = " + oldX + ", x = " + x);
+            //超过滚动范围会出现 oldX = x 或者 oldY = y 的情况,需要特殊处理
+            final boolean isOver = (x >= -mOverDistance && x < 0)
+                    || (x > range && x <= range + mOverDistance);
+            if (oldX != x || oldY != y) {
                 overScrollBy(x - oldX, y - oldY, oldX, oldY,
-                        range, 0, 0, 0, false);
+                        range, 0, mOverDistance, 0, false);
+            }else if (isOver){
+                //跳过此次滚动,进行下一次的计算
+                invalidate();
             }
         }
     }
 
     @Override
     protected void onOverScrolled(int scrollX, int scrollY, boolean clampedX, boolean clampedY) {
-        if (!mScroller.isFinished()) {
-            //fling情况
-            final int oldX = getScrollX();
-            final int oldY = getScrollY();
-            onScrollChanged(scrollX, scrollY, oldX, oldY);
-            super.scrollTo(scrollX, scrollY);
-//            invalidate();
-        } else {
-            Log.e(TAG, "onOverScrolled ---> 是否执行?");
-            super.scrollTo(scrollX, scrollY);
-        }
+        super.scrollTo(scrollX, scrollY);
+    }
+
+    @Override
+    protected int computeHorizontalScrollRange() {
+        return getScrollRange();
     }
 
     private int getScrollRange() {
         //卷尺的总长加上控件的宽度
-        return mSpace * 10 * 200 + mWidth; //200
+        return 10 * mSpace * (mMaxGraduation - mMinGraduation);
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
-        Log.e(TAG, "onDraw ---> 是否执行");
-//        final int x = getScrollX();
-//        final int saveCount = canvas.getSaveCount();
-//        canvas.save();
-//        canvas.translate(getScrollX(), 0);
+        final int x = getScrollX();
+        final int saveCount = canvas.getSaveCount();
+        canvas.save();
+        canvas.translate(x , 0);
 
-        //画刻度:大刻度、小刻度、中间刻度
-        final int total = mTotalGraduation;
+        final int total = mTotalGraduation + 1; //绘制的时候多绘制一个刻度,类似于ListView
         final int space = mSpace;
         final float smallGraduationHeight = mSmallGraduationHeight;
         final float bigGraduationHeight = mBigGraduationHeight;
-        //i值从0到9循环变化,startX从0-30循环变化
         final int index = computeStartIndex();
-        int startX = computeStartDistance();
-        Log.e(TAG, "index = " + index + ", startX = " + startX + ", scrollerX = " + getScrollX());
+        float startX = computeStartDistance();
         for (int i = index; i < total + index; i++) {
-            if (i % 9 == 0) {
+            if (i % 10 == 0) {
                 //画大刻度
                 canvas.drawLine(startX, 0, startX, bigGraduationHeight, mBigGraduationPaint);
 
                 //画文字
-                String text = String.valueOf(i / 9);
-                float textWidth = mTextPaint.measureText(text);
-                final float textX = startX - textWidth / 2.0f;
-                final float textY = mHeight - mTextPaddingBottom + mFontMetrics.bottom;
-                canvas.drawText(text, textX, textY, mTextPaint);
+                int textValue = i / 10 + mMinGraduation;
+                if (textValue >= mMinGraduation && textValue <= mMaxGraduation){
+                    String text = String.valueOf(textValue);
+                    float textWidth = mTextPaint.measureText(text);
+                    final float textX = startX - textWidth / 2.0f;
+                    final float textY = mHeight - mTextPaddingBottom + mFontMetrics.bottom;
+                    canvas.drawText(text, textX, textY, mTextPaint);
+                }
             } else {
                 //画小刻度
                 canvas.drawLine(startX, 0, startX, smallGraduationHeight, mSmallGraduationPaint);
@@ -254,23 +291,36 @@ public class RulerView extends View {
         }
 
         //画中间刻度
-        final float middleX = mWidth / 2.0f + getScrollX();
+        final float middleX = mWidth / 2.0f;
         final float middleGraduationHeight = mMiddleGraduationHeight;
         canvas.drawLine(middleX, 0, middleX, middleGraduationHeight, mMiddleGraduationPaint);
 
-//        canvas.restoreToCount(saveCount);
+        canvas.restoreToCount(saveCount);
     }
 
+    /**
+     * 用于计算绘制大刻度的索引值，需要考虑开始和末尾的大刻度在控件中间
+     *
+     * @return 索引值
+     */
     private int computeStartIndex() {
         final int scrollX = getScrollX();
         final int space = mSpace;
-        return scrollX / space;
+        final int middle = mWidth / 2;
+        final int index = (scrollX - middle) / space;
+        return index;
     }
 
+    /**
+     * 用于计算绘制刻度的起始距离
+     *
+     * @return 起始距离
+     */
     private int computeStartDistance() {
         final int scrollX = getScrollX();
         final int space = mSpace;
-        return scrollX % space;
+        final int middle = mWidth / 2 ;
+        return (middle - scrollX) % space;
     }
 }
 
