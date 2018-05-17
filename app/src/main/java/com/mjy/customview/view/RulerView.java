@@ -162,10 +162,13 @@ public class RulerView extends View {
                     velocityTracker.computeCurrentVelocity(1000, mMaximumFlingVelocity);
                     int initialVelocity = (int) velocityTracker.getXVelocity(mActivePointerId);
                     if (Math.abs(initialVelocity) > mMinimumFlingVelocity){
+                        Log.e(TAG, "是否fling");
                         handleFling(-initialVelocity);
                     }else if (mScroller.springBack(getScrollX(), getScrollY(),
                             0, getScrollRange(), 0, 0)){
                         postInvalidateOnAnimation();
+                    }else {
+                        handleAdsorb();
                     }
 
                     mActivePointerId = INVALID_POINTER;
@@ -183,7 +186,6 @@ public class RulerView extends View {
 
                 mActivePointerId = INVALID_POINTER;
                 endDrag();
-
                 break;
         }
         return true;
@@ -219,6 +221,27 @@ public class RulerView extends View {
         }
     }
 
+    private void handleAdsorb(){
+        final int middle = mWidth / 2;
+        final int originValue = middle % mSpace;
+        final int currentValue = computeStartDistance();
+        final boolean canAdsorb = currentValue > 0 ? (originValue != currentValue) :
+                (mSpace != originValue - currentValue);
+        if (canAdsorb){
+        int deltaX;
+            //向左还是向右
+            if (currentValue > 0){
+                deltaX = currentValue - originValue;
+            }else {
+                deltaX = mSpace + currentValue - originValue;
+            }
+
+            mScroller.startScroll(getScrollX(), getScrollY(), deltaX, 0);
+            postInvalidateOnAnimation();
+        }
+
+    }
+
     @Override
     public void computeScroll() {
         if (mScroller.computeScrollOffset()){
@@ -227,16 +250,16 @@ public class RulerView extends View {
             int x = mScroller.getCurrX();
             int y = mScroller.getCurrY();
             final int range = getScrollRange();
-            Log.e(TAG, "oldX = " + oldX + ", x = " + x);
             //超过滚动范围会出现 oldX = x 或者 oldY = y 的情况,需要特殊处理
-            final boolean isOver = (x >= -mOverDistance && x < 0)
-                    || (x > range && x <= range + mOverDistance);
             if (oldX != x || oldY != y) {
                 overScrollBy(x - oldX, y - oldY, oldX, oldY,
                         range, 0, mOverDistance, 0, false);
-            }else if (isOver){
+            }else if (mScroller.isOverScrolled()){
                 //跳过此次滚动,进行下一次的计算
                 invalidate();
+            }else {
+                //判断是否是整刻度,不是需要吸附到整刻度上
+                handleAdsorb();
             }
         }
     }
@@ -307,8 +330,7 @@ public class RulerView extends View {
         final int scrollX = getScrollX();
         final int space = mSpace;
         final int middle = mWidth / 2;
-        final int index = (scrollX - middle) / space;
-        return index;
+        return (scrollX - middle) / space;
     }
 
     /**
@@ -325,8 +347,7 @@ public class RulerView extends View {
 }
 
 /*
-* 绘制的部分:
-* 1.背景--->灰色
-* 2.主体--->刻度,文字
-* 3.
+* 整刻度的吸附效果
+* 1.拖拽后不fling,up事件处理,处理条件--->不是整刻度
+* 2.拖拽后fling,fling结束后处理,处理条件--->不是整刻度
 * */
