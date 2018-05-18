@@ -18,6 +18,7 @@
         <item>Matrix使用</item>
         <item>Scroller使用</item>
         <item>ImageView图片大小</item>
+        <item>MotionEvent</item>
         <item>GestureDetector使用</item>
         <item>ScaleGestureListener使用</item>
         <item>ScrollView相关</item>
@@ -29,6 +30,7 @@
         <item>com.mjy.customview.matrix.MatrixActivity</item>
         <item>com.mjy.customview.scroller.ScrollerActivity</item>
         <item>com.mjy.customview.image.ImageViewActivity</item>
+        <item>com.mjy.customview.motion.MotionEventActivity</item>
         <item>com.mjy.customview.gesture.GestureDetectorActivity</item>
         <item>com.mjy.customview.gesture.ScaleGestureDetectorActivity</item>
         <item>com.mjy.customview.scrollview.ScrollViewActivity"</item>

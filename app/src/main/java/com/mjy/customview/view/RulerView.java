@@ -34,7 +34,7 @@ public class RulerView extends View {
     private int mMinimumFlingVelocity;
     private int mMaximumFlingVelocity;
 
-    private int mLastPoint;
+    private int mLastPointX;
     private static final int INVALID_POINTER = -1;
     private int mActivePointerId = INVALID_POINTER;
 
@@ -112,7 +112,7 @@ public class RulerView extends View {
     public boolean onTouchEvent(MotionEvent event) {
         initVelocityTrackerIfNotExists();
 
-        final int action = event.getAction();
+        final int action = event.getActionMasked();
         switch (action) {
             case MotionEvent.ACTION_DOWN:
                 if (mIsBeingDragged = !mScroller.isFinished()) {
@@ -126,7 +126,7 @@ public class RulerView extends View {
                     mScroller.abortAnimation();
                 }
 
-                mLastPoint = (int) event.getX();
+                mLastPointX = (int) event.getX();
                 mActivePointerId = event.getPointerId(0);
                 break;
 
@@ -137,7 +137,7 @@ public class RulerView extends View {
                 }
 
                 final int x = (int) event.getX(activePointerIndex);
-                int deltaX = mLastPoint - x;
+                int deltaX = mLastPointX - x;
                 final int range = getScrollRange();
                 if (!mIsBeingDragged && Math.abs(deltaX) > mTouchSlop) {
                     mIsBeingDragged = true;
@@ -150,24 +150,24 @@ public class RulerView extends View {
 
                 if (mIsBeingDragged) {
                     mVelocityTracker.addMovement(event);
-                    mLastPoint = x;
+                    mLastPointX = x;
                     overScrollBy(deltaX, 0, getScrollX(), 0, range, 0,
                             mOverDistance, 0, true);
                 }
                 break;
 
             case MotionEvent.ACTION_UP:
-                if (mIsBeingDragged){
+                if (mIsBeingDragged) {
                     final VelocityTracker velocityTracker = mVelocityTracker;
                     velocityTracker.computeCurrentVelocity(1000, mMaximumFlingVelocity);
                     int initialVelocity = (int) velocityTracker.getXVelocity(mActivePointerId);
-                    if (Math.abs(initialVelocity) > mMinimumFlingVelocity){
+                    if (Math.abs(initialVelocity) > mMinimumFlingVelocity) {
                         Log.e(TAG, "是否fling");
                         handleFling(-initialVelocity);
-                    }else if (mScroller.springBack(getScrollX(), getScrollY(),
-                            0, getScrollRange(), 0, 0)){
+                    } else if (mScroller.springBack(getScrollX(), getScrollY(),
+                            0, getScrollRange(), 0, 0)) {
                         postInvalidateOnAnimation();
-                    }else {
+                    } else {
                         handleAdsorb();
                     }
 
@@ -177,21 +177,50 @@ public class RulerView extends View {
                 break;
 
             case MotionEvent.ACTION_CANCEL:
-                if (mIsBeingDragged){
+                if (mIsBeingDragged) {
                     if (mScroller.springBack(getScrollX(), getScrollY(),
-                            0, getScrollRange(), 0, 0)){
+                            0, getScrollRange(), 0, 0)) {
                         postInvalidateOnAnimation();
+                    } else {
+                        handleAdsorb();
                     }
-                }
 
-                mActivePointerId = INVALID_POINTER;
-                endDrag();
+                    mActivePointerId = INVALID_POINTER;
+                    endDrag();
+                }
+                break;
+
+            case MotionEvent.ACTION_POINTER_DOWN:
+                final int index = event.getActionIndex();
+                mLastPointX = (int) event.getX(index);
+                mActivePointerId = event.getPointerId(index);
+                Log.e(TAG, "index = " + index + ", mLastPointX = " + mLastPointX +
+                        ", mActivePointerId = " + mActivePointerId);
+                break;
+
+            case MotionEvent.ACTION_POINTER_UP:
+                onSecondaryPointerUp(event);
+                mLastPointX = (int) event.getX(event.findPointerIndex(mActivePointerId));
                 break;
         }
         return true;
     }
 
-    private void initVelocityTrackerIfNotExists(){
+    private void onSecondaryPointerUp(MotionEvent event) {
+        final int pointerIndex = (event.getAction() & MotionEvent.ACTION_POINTER_INDEX_MASK) >>
+                MotionEvent.ACTION_POINTER_INDEX_SHIFT;
+        final int pointerId = event.getPointerId(pointerIndex);
+        if (pointerId == mActivePointerId) {
+            final int newPointerIndex = pointerIndex == 0 ? 1 : 0;
+            mLastPointX = (int) event.getX(newPointerIndex);
+            mActivePointerId = event.getPointerId(newPointerIndex);
+            if (mVelocityTracker != null) {
+                mVelocityTracker.clear();
+            }
+        }
+    }
+
+    private void initVelocityTrackerIfNotExists() {
         if (mVelocityTracker == null) {
             mVelocityTracker = VelocityTracker.obtain();
         }
@@ -204,13 +233,13 @@ public class RulerView extends View {
         }
     }
 
-    private void endDrag(){
+    private void endDrag() {
         mIsBeingDragged = false;
 
         recycleVelocityTracker();
     }
 
-    private void handleFling(int velocityX){
+    private void handleFling(int velocityX) {
         final int x = getScrollX();
         final boolean canFling = (x >= -mOverDistance || velocityX > 0) &&
                 (x <= getScrollRange() + mOverDistance || velocityX < 0);
@@ -221,18 +250,18 @@ public class RulerView extends View {
         }
     }
 
-    private void handleAdsorb(){
+    private void handleAdsorb() {
         final int middle = mWidth / 2;
         final int originValue = middle % mSpace;
         final int currentValue = computeStartDistance();
         final boolean canAdsorb = currentValue > 0 ? (originValue != currentValue) :
                 (mSpace != originValue - currentValue);
-        if (canAdsorb){
-        int deltaX;
+        if (canAdsorb) {
+            int deltaX;
             //向左还是向右
-            if (currentValue > 0){
+            if (currentValue > 0) {
                 deltaX = currentValue - originValue;
-            }else {
+            } else {
                 deltaX = mSpace + currentValue - originValue;
             }
 
@@ -244,7 +273,7 @@ public class RulerView extends View {
 
     @Override
     public void computeScroll() {
-        if (mScroller.computeScrollOffset()){
+        if (mScroller.computeScrollOffset()) {
             final int oldX = getScrollX();
             final int oldY = getScrollY();
             int x = mScroller.getCurrX();
@@ -254,10 +283,10 @@ public class RulerView extends View {
             if (oldX != x || oldY != y) {
                 overScrollBy(x - oldX, y - oldY, oldX, oldY,
                         range, 0, mOverDistance, 0, false);
-            }else if (mScroller.isOverScrolled()){
+            } else if (mScroller.isOverScrolled()) {
                 //跳过此次滚动,进行下一次的计算
                 invalidate();
-            }else {
+            } else {
                 //判断是否是整刻度,不是需要吸附到整刻度上
                 handleAdsorb();
             }
@@ -284,7 +313,7 @@ public class RulerView extends View {
         final int x = getScrollX();
         final int saveCount = canvas.getSaveCount();
         canvas.save();
-        canvas.translate(x , 0);
+        canvas.translate(x, 0);
 
         final int total = mTotalGraduation + 1; //绘制的时候多绘制一个刻度,类似于ListView
         final int space = mSpace;
@@ -299,7 +328,7 @@ public class RulerView extends View {
 
                 //画文字
                 int textValue = i / 10 + mMinGraduation;
-                if (textValue >= mMinGraduation && textValue <= mMaxGraduation){
+                if (textValue >= mMinGraduation && textValue <= mMaxGraduation) {
                     String text = String.valueOf(textValue);
                     float textWidth = mTextPaint.measureText(text);
                     final float textX = startX - textWidth / 2.0f;
@@ -341,7 +370,7 @@ public class RulerView extends View {
     private int computeStartDistance() {
         final int scrollX = getScrollX();
         final int space = mSpace;
-        final int middle = mWidth / 2 ;
+        final int middle = mWidth / 2;
         return (middle - scrollX) % space;
     }
 }

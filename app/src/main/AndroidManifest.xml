@@ -33,6 +33,7 @@
         <activity android:name=".scrollview.ScrollViewActivity"/>
         <activity android:name=".scroller.ScrollerActivity"/>
         <activity android:name=".RulerActivity"/>
+        <activity android:name=".motion.MotionEventActivity"/>
     </application>
 
 </manifest>
