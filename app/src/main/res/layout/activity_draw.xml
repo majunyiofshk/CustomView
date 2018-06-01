@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+             android:layout_width="match_parent"
+             android:layout_height="match_parent"
+              android:orientation="vertical"
+    >
+
+    <Button
+        android:id="@+id/btn_parent"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="20dp"
+        android:textSize="16sp"
+        android:textColor="@android:color/white"
+        android:text="parent_invalidate"
+        />
+
+    <Button
+        android:id="@+id/btn_child"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="20dp"
+        android:textSize="16sp"
+        android:textColor="@android:color/white"
+        android:text="child_invalidate"
+        />
+
+    <com.mjy.customview.draw.DrawViewGroup
+        android:id="@+id/dvg_parent"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        >
+
+        <com.mjy.customview.draw.DrawView
+            android:id="@+id/dv_child"
+            android:layout_width="200dp"
+            android:layout_height="200dp"
+            />
+    </com.mjy.customview.draw.DrawViewGroup>
+
+</LinearLayout>

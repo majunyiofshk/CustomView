@@ -11,6 +11,7 @@ import android.view.ViewGroup;
  */
 
 public class MeasureLayout extends ViewGroup {
+    public static final String TAG = "MeasureLayout";
     public MeasureLayout(Context context) {
         this(context, null);
     }
@@ -21,6 +22,7 @@ public class MeasureLayout extends ViewGroup {
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        Log.e(TAG, "onMeasure");
         final int count = getChildCount();
         int maxWidth = 0;
         int maxHeight = 0;
@@ -35,6 +37,7 @@ public class MeasureLayout extends ViewGroup {
 
     @Override
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
+        Log.e(TAG, "onLayout");
         final int count = getChildCount();
         final int parentLeft = getPaddingLeft();
         final int parentTop = getPaddingTop();
@@ -53,6 +56,7 @@ public class MeasureLayout extends ViewGroup {
 
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
+        Log.e(TAG, "onSizeChanged");
         Log.e("MeasureLayout-w：", w + "");
         Log.e("MeasureLayout-h：", h + "");
     }

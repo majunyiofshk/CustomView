@@ -62,8 +62,8 @@ public class MotionEventActivity extends AppCompatActivity {
         int index = event.getActionIndex();
         int pointerId = event.getPointerId(index);
         int pointerIndex = event.findPointerIndex(pointerId);
-//        Log.e(TAG, name + " ---> " + "index = " + index + ", pointerId = "
-//                + pointerId + ", pointerIndex = " + pointerIndex);
+        Log.e(TAG, name + " ---> " + "index = " + index + ", pointerId = "
+                + pointerId + ", pointerIndex = " + pointerIndex);
     }
 }
 

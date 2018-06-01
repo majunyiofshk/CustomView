@@ -15,6 +15,7 @@
 
 
     <string-array name="itemNames">
+        <item>draw流程</item>
         <item>Matrix使用</item>
         <item>Scroller使用</item>
         <item>ImageView图片大小</item>
@@ -22,11 +23,16 @@
         <item>GestureDetector使用</item>
         <item>ScaleGestureListener使用</item>
         <item>ScrollView相关</item>
+        <item>RecyclerView相关</item>
         <item>手势应用</item>
         <item>仿薄荷卷尺</item>
+        <item>ViewDragHelper使用</item>
+        <item>多RecyclerView</item>
+
     </string-array>
 
     <string-array name="itemActions">
+        <item>com.mjy.customview.draw.DrawActivity</item>
         <item>com.mjy.customview.matrix.MatrixActivity</item>
         <item>com.mjy.customview.scroller.ScrollerActivity</item>
         <item>com.mjy.customview.image.ImageViewActivity</item>
@@ -34,8 +40,11 @@
         <item>com.mjy.customview.gesture.GestureDetectorActivity</item>
         <item>com.mjy.customview.gesture.ScaleGestureDetectorActivity</item>
         <item>com.mjy.customview.scrollview.ScrollViewActivity"</item>
+        <item>com.mjy.customview.recycler.RecyclerViewActivity"</item>
         <item>com.mjy.customview.picture.PictureActivity"</item>
         <item>com.mjy.customview.RulerActivity"</item>
+        <item>com.mjy.customview.drag.DragViewActivity"</item>
+        <item>com.mjy.customview.recycler.MultiActivity"</item>
     </string-array>
 
 </resources>

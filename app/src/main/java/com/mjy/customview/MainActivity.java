@@ -33,7 +33,6 @@ public class MainActivity extends AppCompatActivity implements TouchAdapter.OnIt
         DividerItemDecoration decoration =
                 new DividerItemDecoration(this, LinearLayoutManager.VERTICAL);
         rvTouch.addItemDecoration(decoration);
-
     }
 
     private List<TouchData> createListData() {
@@ -142,8 +141,40 @@ public class MainActivity extends AppCompatActivity implements TouchAdapter.OnIt
 * */
 
 /*
-* ViewGroup事件传递原理
-* 1.ViewGroup对于事件的拦截策略
-* 2.子View对down事件消费情况对后续事件传递的影响
-* 3.
+* View刷新流程
+* 1.View有关刷新的方法
+* 2.刷新方法最终执行到了哪里
+* 3.每个刷新的方法具体做了什么 ---> 执行过程
+* 4.Choreographer的作用
+* */
+
+/*
+* 调用invalidate可能出现这样的几种情况:
+* 1.界面首次绘制还没有完成
+* 2.界面首次绘制完成
+* 3.上一次由invalidate方法的调用导致的重绘还没有完成
+* 4.上一次由invalidate方法的调用导致的重绘已经完成
+* */
+
+/*
+* mPrivateFlags标记位
+* 1.PFLAG_DRAWN
+*   (1)用来标记View是否执行过draw方法,执行过draw方法的View会被打上该标记。
+*   (2)可以添加该标记使invalidate方法可以通过
+* 2.PFLAG_HAS_BOUNDS
+*   (1)用来标记是否执行过setFrame方法,执行过setFrame并且View的位置(左上右下)发生改变时的View会被打上该标记。
+*   (2)值得注意的是View并没有相关代码去清除该标记。
+* 3.PFLAG_INVALIDATED
+*   (1)该标记表明当前View所占区域已经失效,需要重新绘制。
+*   (2)对于已经打上该标记的View执行invalidate不会重新绘制。
+*   (3)对于执行invalidate和requestLayout方法的View,都会被打上该标记。
+*   (4)执行过draw方法
+* 4.PFLAG_DRAWING_CACHE_VALID
+*  (1)该标记表明当前View正在缓存的一些视图是有效的
+*  (2)绘制完成后的View会被打上该标记
+* 6.PFLAG_OPAQUE_BACKGROUND
+*  (1)标记View的背景是否是实心的,背景实心的条件:a.背景不为空,b.背景是不透明的
+*  (2)改标记时判断View是否实心的条件之一
+* 7.PFLAG_OPAQUE_SCROLLBARS
+*  (1)标记View的滚动条是否是实心的,滚动条实心的条件:a.有滚动条,b.滚动条不是OVERLAY类型的
 * */

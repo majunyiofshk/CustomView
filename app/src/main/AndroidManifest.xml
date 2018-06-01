@@ -34,6 +34,12 @@
         <activity android:name=".scroller.ScrollerActivity"/>
         <activity android:name=".RulerActivity"/>
         <activity android:name=".motion.MotionEventActivity"/>
+        <activity android:name=".recycler.RecyclerViewActivity"/>
+        <activity android:name=".drag.DragViewActivity"/>
+        <activity android:name=".recycler.MultiActivity"/>
+        <activity android:name=".draw.DrawActivity"
+            android:hardwareAccelerated="false"
+            />
     </application>
 
 </manifest>
