@@ -176,5 +176,7 @@ public class MainActivity extends AppCompatActivity implements TouchAdapter.OnIt
 *  (1)标记View的背景是否是实心的,背景实心的条件:a.背景不为空,b.背景是不透明的
 *  (2)改标记时判断View是否实心的条件之一
 * 7.PFLAG_OPAQUE_SCROLLBARS
-*  (1)标记View的滚动条是否是实心的,滚动条实心的条件:a.有滚动条,b.滚动条不是OVERLAY类型的
+*  (1)标记View的滚动条是否是实心的,滚动条实心的条件:a.没有滚动条,或者b.有滚动条但是滚动条是OVERLAY类型
+*  (2)该标记是判断View是否是实心的条件之一
+* 8.
 * */
