@@ -178,5 +178,12 @@ public class MainActivity extends AppCompatActivity implements TouchAdapter.OnIt
 * 7.PFLAG_OPAQUE_SCROLLBARS
 *  (1)标记View的滚动条是否是实心的,滚动条实心的条件:a.没有滚动条,或者b.有滚动条但是滚动条是OVERLAY类型
 *  (2)该标记是判断View是否是实心的条件之一
-* 8.
+* 8.PFLAG_SKIP_DRAW
+*  (1)标记View是否跳过绘制,对于ViewGroup来说,绘制的时候只会调用dispatchDraw
+*  (2)该标记是会由WILL_NOT_DRAW以及背景和前景共同决定的。具体的逻辑为:a.如果View没有打上WILL_NOT_DRAW的标记,那么
+*     View就不会被打上PFLAG_SKIP_DRAW标记,b.如果View有WILL_NOT_DRAW的标记,接下来会判断是否有背景,如果没有背景,
+*     那么View就不会被打上PFLAG_SKIP_DRAW的标记。
+*
+*     10000001 00000000 00001000 00110000
+*               1100000 00000000 00000000
 * */

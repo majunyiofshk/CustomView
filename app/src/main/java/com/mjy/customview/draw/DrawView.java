@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.drawable.Drawable;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -29,7 +30,7 @@ public class DrawView extends View {
         initDrawView();
     }
 
-    private void initDrawView(){
+    private void initDrawView() {
         mPaint = new Paint();
         mPaint.setStyle(Paint.Style.FILL);
         mPaint.setColor(Color.parseColor("#ff8888"));
@@ -51,5 +52,19 @@ public class DrawView extends View {
     protected void onDraw(Canvas canvas) {
         Log.e(TAG, "onDraw");
         canvas.drawCircle(mWidth / 2.0f, mHeight / 2.0f, 100, mPaint);
+    }
+
+    @Override
+    public boolean isOpaque() {
+        boolean isOpaque;
+        final Drawable background = getBackground();
+        if (background == null) {
+            isOpaque = false;
+            Log.e(TAG, "isOpaque = false");
+        } else {
+            isOpaque = true;
+            Log.e(TAG, "isOpaque = true");
+        }
+        return isOpaque;
     }
 }

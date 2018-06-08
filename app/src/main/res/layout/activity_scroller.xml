@@ -5,9 +5,18 @@
               android:orientation="vertical"
     >
 
-    <com.mjy.customview.scroller.ScrollerView
+    <FrameLayout
+        android:id="@+id/fl_container"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Scroller相关用法"
-        />
+        android:layout_height="match_parent"
+        >
+
+        <Button
+            android:id="@+id/btn1"
+            android:layout_width="120dp"
+            android:layout_height="wrap_content"
+            android:text="scrollBy"
+            />
+
+    </FrameLayout>
 </LinearLayout>

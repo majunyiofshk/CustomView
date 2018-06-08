@@ -40,6 +40,7 @@
         <activity android:name=".draw.DrawActivity"
             android:hardwareAccelerated="false"
             />
+        <activity android:name=".window.WindowActivity"/>
     </application>
 
 </manifest>

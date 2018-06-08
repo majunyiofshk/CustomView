@@ -4,7 +4,8 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.widget.OverScroller;
+import android.view.View;
+import android.widget.Button;
 
 import com.mjy.customview.R;
 
@@ -19,29 +20,30 @@ public class ScrollerActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_scroller);
-        initScroller();
-        initFlingScroller();
+        initView();
     }
 
-    private void initScroller() {
-        OverScroller scroller = new OverScroller(this);
-        scroller.startScroll(100, -100, 100, 100);
-        final int currX = scroller.getCurrX();
-        final int currY = scroller.getCurrY();
-        final int finalX = scroller.getFinalX();
-        final int finalY = scroller.getFinalY();
-        Log.e(TAG, "startScroll ---> currX = " + currX + ", currY = " + currY +
-                ", finalX = " + finalX + ", finalY = " + finalY);
+    private void initView() {
+        final View parent = findViewById(R.id.fl_container);
+        final Button btn = (Button) findViewById(R.id.btn1);
+        btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                printArea(btn);
+                parent.scrollBy(-100, 0);
+                printArea(btn);
+            }
+        });
     }
 
-    private void initFlingScroller(){
-        OverScroller scroller = new OverScroller(this);
-        scroller.fling(100, 0, 9000, 0, 0, 1000, 0, 0, 0, 200);
-        final int currX = scroller.getCurrX();
-        final int currY = scroller.getCurrY();
-        final int finalX = scroller.getFinalX();
-        final int finalY = scroller.getFinalY();
-        Log.e(TAG, "fling ---> currX = " + currX + ", currY = " + currY +
-                ", finalX = " + finalX + ", finalY = " + finalY);
+    private static void printArea(View view) {
+        final int left = view.getLeft();
+        final int top = view.getTop();
+        final int right = view.getRight();
+        final int bottom = view.getBottom();
+        Log.e(TAG, "left = " + left + ", top = " + top +
+                ", right = " + right + ", bottom = " + bottom);
     }
+
+
 }

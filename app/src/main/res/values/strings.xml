@@ -28,6 +28,7 @@
         <item>仿薄荷卷尺</item>
         <item>ViewDragHelper使用</item>
         <item>多RecyclerView</item>
+        <item>Window与WindowManager</item>
 
     </string-array>
 
@@ -45,6 +46,7 @@
         <item>com.mjy.customview.RulerActivity"</item>
         <item>com.mjy.customview.drag.DragViewActivity"</item>
         <item>com.mjy.customview.recycler.MultiActivity"</item>
+        <item>com.mjy.customview.window.WindowActivity"</item>
     </string-array>
 
 </resources>

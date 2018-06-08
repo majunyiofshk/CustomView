@@ -54,10 +54,15 @@ public class RecyclerViewActivity extends AppCompatActivity {
 * 测量过程
 * 1.在RecyclerView的宽高都为EXACTLY时,会先测量自己并且跳过测量子View。在onLayout中进行测量子View,然后执行摆放。
 * 2.其余情况,在onMeasure中先测量孩子,在测量本身。先前已经执行过的过程会被跳过。
+* */
+
+/*
+* RecyclerView中重要的成员:
 *
-* 编码的能力
-* 思想到计算机思想的转变
-* 学习数据结构和算法
-* 逻辑思维能力
-* 构建一个对象的能力
+* 1.mState:保存着当前View的一些重要状态
+*  (1)mIsMeasuring:表示当前RecyclerView是否处于测量阶段。
+*  (2)mLayoutStep:表示当前RecyclerView处于layout的哪一个阶段
+*     STEP_START:第一步 ---> dispatchLayoutStep1
+*     STEP_LAYOUT:第二步 ---> dispatchLayoutStep2
+*     STEP_ANIMATIONS:第三步 ---> dispatchLayoutStep3
 * */

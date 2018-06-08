@@ -2,6 +2,8 @@ package com.mjy.customview.draw;
 
 import android.content.Context;
 import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
@@ -15,6 +17,7 @@ import android.widget.FrameLayout;
 public class DrawViewGroup extends ViewGroup {
 
     private static final String TAG = "DrawViewGroup";
+    private Paint mPaint;
 
     public DrawViewGroup(Context context) {
         super(context);
@@ -27,6 +30,10 @@ public class DrawViewGroup extends ViewGroup {
 
     private void initDrawViewGroup() {
         setWillNotDraw(false);
+
+        mPaint = new Paint();
+        mPaint.setStyle(Paint.Style.FILL);
+        mPaint.setColor(Color.parseColor("#777777"));
     }
 
     @Override
@@ -87,7 +94,7 @@ public class DrawViewGroup extends ViewGroup {
     @Override
     protected void onDraw(Canvas canvas) {
         Log.e(TAG, "onDraw");
-        super.onDraw(canvas);
+        canvas.drawCircle(600 / 2.0f, 600 / 2.0f, 200, mPaint);
     }
 
     @Override
