@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.mjy.customview.refresh.RefreshLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    >
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:nestedScrollingEnabled="true"
+        >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            >
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="100dp"
+                android:gravity="center"
+                android:text="第一"
+                android:textColor="#999999"
+                android:textSize="23sp"
+                />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="100dp"
+                android:gravity="center"
+                android:text="第二"
+                android:textColor="#999999"
+                android:textSize="23sp"
+                />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="100dp"
+                android:gravity="center"
+                android:text="第三"
+                android:textColor="#999999"
+                android:textSize="23sp"
+                />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="100dp"
+                android:gravity="center"
+                android:text="第四"
+                android:textColor="#999999"
+                android:textSize="23sp"
+                />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="100dp"
+                android:gravity="center"
+                android:text="第五"
+                android:textColor="#999999"
+                android:textSize="23sp"
+                />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="100dp"
+                android:gravity="center"
+                android:text="第六"
+                android:textColor="#999999"
+                android:textSize="23sp"
+                />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="100dp"
+                android:gravity="center"
+                android:text="第七"
+                android:textColor="#999999"
+                android:textSize="23sp"
+                />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="100dp"
+                android:gravity="center"
+                android:text="第八"
+                android:textColor="#999999"
+                android:textSize="23sp"
+                />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="100dp"
+                android:gravity="center"
+                android:text="第九"
+                android:textColor="#999999"
+                android:textSize="23sp"
+                />
+        </LinearLayout>
+    </ScrollView>
+
+</com.mjy.customview.refresh.RefreshLayout>

@@ -29,6 +29,8 @@
         <item>ViewDragHelper使用</item>
         <item>多RecyclerView</item>
         <item>Window与WindowManager</item>
+        <item>下拉刷新</item>
+        <item>嵌套滚动</item>
 
     </string-array>
 
@@ -47,6 +49,8 @@
         <item>com.mjy.customview.drag.DragViewActivity"</item>
         <item>com.mjy.customview.recycler.MultiActivity"</item>
         <item>com.mjy.customview.window.WindowActivity"</item>
+        <item>com.mjy.customview.refresh.RefreshActivity"</item>
+        <item>com.mjy.customview.nested.NestedActivity"</item>
     </string-array>
 
 </resources>

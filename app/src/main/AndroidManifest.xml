@@ -41,6 +41,8 @@
             android:hardwareAccelerated="false"
             />
         <activity android:name=".window.WindowActivity"/>
+        <activity android:name=".refresh.RefreshActivity"/>
+        <activity android:name=".nested.NestedActivity"/>
     </application>
 
 </manifest>
